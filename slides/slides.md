@@ -12,16 +12,13 @@
 * oinopa.com
 * <img src="hrlogo.png" height="100px" class="hrlogo">
 
+!SLIDE bullets
+* Rails 3
+* MongoDB
+
 !SLIDE center
 # Happy Birthday, Mongoid!
 <img src="baloons.png" height="60%" style="margin-bottom: -20em;">
-
-!SLIDE bullets incremental
-
-# It's a community
-* Solid documentation<br>http://mongoid.org
-* Active IRC (#mongoid)
-* Mailing List<br>http://groups.google.com/group/mongoid
 
 !SLIDE bullets incremental
 
@@ -30,8 +27,19 @@
 * 40 in the last 2 months,<br>with over 300 commits!
   <img src="contribs.png" width="700px" class="bordered" style="margin-top: 20px">
 
+!SLIDE bullets incremental
+# Compare with another Mongo library...
+* <img src="mongomapper.png" width="700px" class="bordered" style="margin-top: 20px">
+
+!SLIDE bullets incremental
+
+# It's a community
+* Solid documentation<br>http://mongoid.org
+* Active IRC (#mongoid)
+* Mailing List<br>http://groups.google.com/group/mongoid
+
 !SLIDE
-# It's gone global!
+# It's global!
 <div class="flags">
 <img src="France-Flag-64.png">
 <img src="Brazil-Flag-64.png">
@@ -48,7 +56,7 @@
 # Mongoid <img src="heart.png" height="100px" style="margin: 0 20px -30px;"> Rails 3
 
 !SLIDE
-# Template
+# Railties
 
 !SLIDE
 
@@ -110,49 +118,114 @@
     user.update_attributes(:age => 3)
     user.age # => 20
 
-!SLIDE
+!SLIDE bullets incremental
 # But Still Agnostic...
+
+* Sinatra
+* Padrino
 
 !SLIDE code
 
     @@@ Ruby
-    require "datamapper"
-
     class User
       include DataMapper::Resource
+    end
+
+    class Comments < ActiveRecord::Base
     end
 
     class Post
       include Mongoid::Document
       referenced_in :user
+      references_many :comments
     end
 
 !SLIDE
 # Mongoid <img src="heart.png" height="100px" style="margin: 0 20px -30px;"> MongoDB
 
-<div class="notes">
+!SLIDE
+## github.com/mongoid/mongoid/issues
 
-And this might seem like a silly thing to say -- of course an ORM loves it's
-database, right? Right?
+!SLIDE bullets incremental
+# Core Mongo Features
 
-But, really. We love MongoDB. We don't think there should be any features
-MongoDB has you shouldn't be able to use with Mongoid.
+* Fast In-Place Updates
+* Rich Document Based Querying
+* Replication and High Availability
 
-So, then, let's dive into what's happened in MongoDB over the last few months,
-and show how you can take advantage of them from Mongoid.
+!SLIDE
+# In-Place Updates
 
-</div>
+!SLIDE code
+
+    @@@ Ruby
+    Person.embeds_many :addresses
+    Address.embeds_many :locations
+
+!SLIDE code
+
+    @@@ Ruby
+    person.attributes
+    # => {"_id" => 1,
+    #     "addresses" => [
+    #       {"_id" => 1,
+    #        "locations" => [
+    #         {"_id" => 1},
+    #         {"_id" => 2}
+    #        ]}]}
+
+!SLIDE code
+
+    @@@ Ruby
+    person.addresses[0].locations[0].update_attributes(
+      :name => "Austin"
+    )
+
+!SLIDE bullets
+# Other Mongo Libraries
+* Push full document graph
+
+!SLIDE code
+
+    @@@ Javascript
+    db.users.update({_id: ""}, {
+      addresses: [
+        { locations: [{name: "Austin"}] },
+        { locations: [{name: "Dallas"}] }
+      ]
+    })
+
+!SLIDE
+# But Mongoid embraces the "Mongo Way"
+
+!SLIDE code
+
+    @@@ Javascript
+    db.users.update(
+      {_id : 1, 'addresses._id' : 2 },
+      {
+      "$pushAll" => {
+        'addresses.$.addresses': [{name: "Austin"}]
+      }
+    )
 
 !SLIDE
 # Rich Query Language
 
 !SLIDE code
+
     @@@ Ruby
     User.where(:name => "John")
     User.all(:age.lt => 24, :age.gt => 18)
     User.where(:title.in => %w(Ms Mrs))
 
 !SLIDE code
+
+    @@@ Ruby
+    Person.where("addresses.locations.name" => "Austin")
+
+!SLIDE code
+
     @@@ Ruby
     class User
       scope :active, :status => 'active'
@@ -220,10 +293,10 @@ and show how you can take advantage of them from Mongoid.
     # => ["Second City"]
 
 !SLIDE
-# Replica Sets
+# Replication and High Availability
 
 !SLIDE
-# Master / Slave
+# Replication in Mongoid 1.4:<br>Master / Slave
 
 !SLIDE
 # Master
@@ -250,7 +323,7 @@ and show how you can take advantage of them from Mongoid.
     mongod --slave  --source 127.0.0.1:27017 \
       --dbpath /data/slave2
 
-!SLIDE bullets incremental
+!SLIDE bullets
 
 * Write to master
 * At some point, writes are synced to slaves
@@ -320,7 +393,11 @@ and show how you can take advantage of them from Mongoid.
     mongod --master --dbpath /data/slave1
 
 !SLIDE
-# So, replica sets?
+# Solution?
+
+!SLIDE
+# Replica Sets
+### new in Mongo 1.6
 
 !SLIDE
 
@@ -411,7 +488,7 @@ and show how you can take advantage of them from Mongoid.
 !SLIDE bullets
 # Thanks for listening!
 
-* Slides are available here: <br>`http://github.com/bernerdschaefer/stuff`
+* Slides are available here: <br>`http://github.com/bernerdschaefer/mongoidslides`
 
 * Mongoid Site: <br>`http://mongoid.org`
 
