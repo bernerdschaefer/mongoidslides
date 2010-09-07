@@ -477,7 +477,7 @@
 * RC RSN.
 
 !SLIDE bullets incremental
-# Whatever happens in mongo 1.7.x, and 1.8, and..
+# Whatever happens in MongoDB 1.7.x, and 1.8, and..
 
 * Virtual collections for embedded documents
 * Real date support
