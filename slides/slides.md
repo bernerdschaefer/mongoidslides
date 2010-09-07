@@ -178,7 +178,7 @@
 
     @@@ Ruby
     person.addresses[0].locations[0].update_attributes(
-      :name => "Austin"
+      :name => "Chicago"
     )
 
 !SLIDE bullets
@@ -190,7 +190,7 @@
     @@@ Javascript
     db.users.update({_id: ""}, {
       addresses: [
-        { locations: [{name: "Austin"}] },
+        { locations: [{name: "Chicago"}] },
         { locations: [{name: "Dallas"}] }
       ]
     })
@@ -205,7 +205,7 @@
       {_id : 1, 'addresses._id' : 2 },
       {
       "$pushAll" => {
-        'addresses.$.addresses': [{name: "Austin"}]
+        'addresses.$.addresses': [{name: "Chicago"}]
       }
     )
 
@@ -222,7 +222,7 @@
 !SLIDE code
 
     @@@ Ruby
-    Person.where("addresses.locations.name" => "Austin")
+    Person.where("addresses.locations.name" => "Chicago")
 
 !SLIDE code
 
@@ -282,14 +282,14 @@
 
     @@@ Ruby
     class Spot
-      scope :near, lambda { |l|
+      scope :close_to, lambda { |l|
         where(:_id.ne => l.id,
               :latlng.within => {
                 "$center" => [l.latlng, 0.01]
               }) }
     end
 
-    Spot.near(alehouse).limit(1)
+    Spot.close_to(alehouse).limit(1)
     # => ["Second City"]
 
 !SLIDE
@@ -323,7 +323,7 @@
     mongod --slave  --source 127.0.0.1:27017 \
       --dbpath /data/slave2
 
-!SLIDE bullets
+!SLIDE bullets incremental
 
 * Write to master
 * At some point, writes are synced to slaves
@@ -370,12 +370,12 @@
 !SLIDE code
 
     @@@ Ruby
-    User.create
     slave = Mongo::Connection.new(
       nil,
       27018,
       :slave_ok => true
     )
+    User.create
     slave["users"].count # 0
     sleep 2
     slave["users"].count # 1
@@ -383,12 +383,10 @@
 !SLIDE
 # Master goes down...
 
-    @@@ Bash
     kill <pid_of_master>
 
 !SLIDE
 # Must restart a slave as the new master
-    @@@ Bash
     kill <pid_of_slave1>
     mongod --master --dbpath /data/slave1
 
@@ -476,10 +474,10 @@
 !SLIDE bullets incremental
 # So what's next?
 
-* RC end of next week
+* RC RSN.
 
 !SLIDE bullets incremental
-# Whatever happens in mongo 1.7, and 1.8, and..
+# Whatever happens in mongo 1.7.x, and 1.8, and..
 
 * Virtual collections for embedded documents
 * Real date support
