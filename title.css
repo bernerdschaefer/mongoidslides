@@ -6,7 +6,7 @@ body {
 }
 h1 { line-height: 1em; }
 #preso, .slide { background: transparent; border: 0 }
-#preso { -webkit-border-radius: 10px; border: 3px solid rgba(0, 0, 0, 0.8); }
+#preso { -webkit-border-radius: 10px; border: 3px solid rgba(0, 0, 0, 0.8); width: 1000px !important; height: 720px !important; }
 .slide {
   background: rgba(0, 0, 0, 0.5);
   -webkit-border-radius: 7px;
